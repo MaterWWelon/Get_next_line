@@ -6,7 +6,7 @@
 /*   By: mbellini <mbellini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 10:28:19 by mbellini          #+#    #+#             */
-/*   Updated: 2021/12/23 15:52:33 by mbellini         ###   ########.fr       */
+/*   Updated: 2021/12/29 15:19:50 by mbellini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	find_n(char *str)
 {
 	size_t	i;
+
 	if (!str)
 		return (-1);
 	i = 0;
