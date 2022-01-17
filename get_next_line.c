@@ -12,73 +12,99 @@
 
 #include "get_next_line.h"
 
-char	*next_line(char **save, char *buffer)
+int	find_n(char *str)
 {
-	char	*line;
+	size_t	i;
 
-	if (!*save)
+	if (!str)
+		return (-1);
+	i = 0;
+	while (str[i] != '\0')
 	{
-		*save = ft_substr(buffer, find_n(buffer) + 1,
-				BUFFER_SIZE - find_n(buffer));
-		line = ft_substr(buffer, 0, find_n(buffer) + 1);
+		if (str[i] == '\n')
+			return (i);
+		i++;
 	}
+	return (-1);
+}
+
+char	*ft_save(char *save, char *buffer)
+{
+	char	*new_save;
+
+	if (save == NULL && buffer[0] != '\0')
+		new_save = ft_strdup(buffer);
 	else
+		new_save = ft_strjoin(save, buffer);
+	free(save);
+	if (!new_save)
+		return (NULL);
+	return (new_save);
+}
+
+char	*ft_line(int nread, char **save)
+{
+	char	*tmp;
+	char	*ligne;
+
+	ligne = NULL;
+	if (find_n(*save) == -1 && nread == 0 && *save)
 	{
-		line = ft_strjoin(*save, ft_substr(buffer, 0, find_n(buffer) + 1));
+		if (*save[0] != 0)
+			ligne = ft_strdup(*save);
 		free(*save);
-		*save = ft_substr(buffer, find_n(buffer) + 1,
-				BUFFER_SIZE - find_n(buffer));
+		*save = NULL;
+		return (ligne);
 	}
-	return (line);
-}
-
-void	ft_save(char **save, char *buffer)
-{
-	if (*save)
-		*save = ft_strjoin(*save, buffer);
-	else
-		*save = ft_substr(buffer, 0, BUFFER_SIZE);
-}
-
-char	*find_n_save(char **save)
-{
-	char	*line;
-
-	line = ft_substr(*save, 0, find_n(*save) + 1);
-	*save = ft_substr(*save, find_n(*save) + 1, BUFFER_SIZE - find_n(*save));
-	return (line);
+	ligne = ft_substr(*save, 0, find_n(*save) + 1);
+	if (!ligne)
+		return (free(*save), NULL);
+	tmp = ft_substr(*save, find_n(*save) + 1, BUFFER_SIZE + 1);
+	free(*save);
+	if (!tmp)
+		return (NULL);
+	*save = ft_strdup(tmp);
+	free(tmp);
+	if (!(*save))
+		return (NULL);
+	return (ligne);
 }
 
 char	*get_next_line(int fd)
 {
 	char		buffer[BUFFER_SIZE + 1];
-	static char	*save;
-	ssize_t		nread;
+	static char	*save = 0;
+	int		nread;
 
 	nread = 1;
-	while (nread != 0 && find_n(save) == -1)
+	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
+		return (NULL);
+	while (nread > 0 && find_n(save) == -1)
 	{
 		nread = read(fd, buffer, BUFFER_SIZE);
+		printf("nread: %d\n", nread);
+		if (nread < 0)
+			return (NULL);
+		printf("ici\n");
 		buffer[nread] = '\0';
-		if (find_n(buffer) != -1)
-		{
-			return (next_line(&save, buffer));
-		}
-		else
-			ft_save(&save, buffer);
+		printf("ici2");
+		save = ft_save(save, buffer);
+		if (!(save))
+			return (NULL);
 	}
-	if (find_n(save) != -1)
-		return (find_n_save(&save));
-	return (NULL);
+	return (ft_line(nread, &save));
 }
-
-/* int main()
+int main()
 {
-	int fd = open("test", O_RDONLY);
+	int fd = open("test2", O_RDONLY);
 	if (fd == 1)
 		return (1);
-	printf("%s", get_next_line(fd));
-	printf("%s", get_next_line(fd));
-	//printf("%s\n", get_next_line(fd));
+	char *s1;
+	while ((s1 = get_next_line(fd)) != NULL)
+	{
+		printf("%s", s1);
+		free(s1);
+	}
+	//get_next_line(fd);
+	//printf("%s", s1);
 }
- */

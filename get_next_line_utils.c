@@ -12,20 +12,26 @@
 
 #include "get_next_line.h"
 
-int	find_n(char *str)
+char	*ft_strdup(const char *s)
 {
-	size_t	i;
+	char	*cpy;
+	int		i;
+	int		slen;
 
-	if (!str)
-		return (-1);
+	slen = 0;
 	i = 0;
-	while (str[i] != '\0')
+	while (s[slen])
+		slen++;
+	cpy = malloc(sizeof(char) * (slen + 1));
+	if (!cpy)
+		return (NULL);
+	while (s[i])
 	{
-		if (str[i] == '\n')
-			return (i);
+		cpy[i] = s[i];
 		i++;
 	}
-	return (-1);
+	cpy[i] = '\0';
+	return (cpy);
 }
 
 size_t	ft_strlen(const char *s)
@@ -44,17 +50,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	int		j;
 	char	*join;
 
+	if (!s1 && !s2)
+		return (NULL);
 	join = malloc((ft_strlen(s1) + ft_strlen(s2)) * sizeof(char) + 1);
 	if (!join)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while (s1[i])
+	while (s1 && s1[i])
 	{
 		join[i] = s1[i];
 		i++;
 	}
-	while (s2[j])
+	while (s2 && s2[j])
 	{
 		join[i] = s2[j];
 		i++;
