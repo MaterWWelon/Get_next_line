@@ -6,7 +6,7 @@
 /*   By: mbellini <mbellini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 10:49:00 by mbellini          #+#    #+#             */
-/*   Updated: 2022/01/25 14:09:47 by mbellini         ###   ########.fr       */
+/*   Updated: 2022/01/25 14:47:27 by mbellini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 int	find_n(char *str)
 {
-	size_t	i;
+	int	i;
 
 	if (!str)
 		return (-1);
 	i = 0;
-	while (str[i] != '\0')
+	while (str[i])
 	{
 		if (str[i] == '\n')
 			return (i);
@@ -28,96 +28,70 @@ int	find_n(char *str)
 	return (-1);
 }
 
-char	*ft_save(char *save, char *buffer)
+char	*add_mem(char *lu_init, char *buff)
 {
-	char	*new_save;
+	char	*new_lu;
 
-	if (save == NULL && buffer[0] != '\0')
-		new_save = ft_strdup(buffer);
+	if (lu_init == NULL && buff[0] != '\0')
+		new_lu = ft_strdup(buff);
 	else
-		new_save = ft_strjoin(save, buffer);
-	free(save);
-	if (!new_save)
+		new_lu = ft_strjoin(lu_init, buff);
+	free(buff);
+	free(lu_init);
+	if (!new_lu)
 		return (NULL);
-	return (new_save);
+	return (new_lu);
 }
 
-char	*ft_line(int nread, char **save)
+char	*get_line(int n_read, char **lu)
 {
 	char	*tmp;
 	char	*ligne;
 
 	ligne = NULL;
-	if (find_n(*save) == -1 && nread == 0 && *save)
+	if (find_n(*lu) == -1 && n_read == 0 && *lu)
 	{
-		if (*save[0] != 0)
-			ligne = ft_strdup(*save);
-		free(*save);
-		*save = NULL;
+		if (*lu[0] != 0)
+			ligne = ft_strdup(*lu);
+		free(*lu);
+		*lu = NULL;
 		return (ligne);
 	}
-	ligne = ft_substr(*save, 0, find_n(*save) + 1);
+	ligne = ft_substr(*lu, 0, find_n(*lu) + 1);
 	if (!ligne)
-		return (free(*save), NULL);
-	tmp = ft_substr(*save, find_n(*save) + 1, BUFFER_SIZE + 1);
-	free(*save);
+		return (free(*lu), NULL);
+	tmp = ft_substr(*lu, find_n(*lu) + 1, BUFFER_SIZE + 1);
+	free(*lu);
 	if (!tmp)
 		return (NULL);
-	*save = ft_strdup(tmp);
+	*lu = ft_strdup(tmp);
 	free(tmp);
-	if (!(*save))
+	if (!(*lu))
 		return (NULL);
 	return (ligne);
 }
 
 char	*get_next_line(int fd)
 {
-	char		buffer[BUFFER_SIZE + 1];
-	static char	*save = 0;
-	int		nread;
+	static char		*lu = 0;
+	char			*buff;
+	int				n_read;
 
-	nread = 1;
+	n_read = 1;
 	if (fd < 0 || fd > 1024 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (nread > 0 && find_n(save) == -1)
+	while (find_n(lu) == -1 && n_read > 0)
 	{
-		nread = read(fd, buffer, BUFFER_SIZE);
-		if (nread < 0)
+		buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+		if (!buff)
 			return (NULL);
-		buffer[nread] = '\0';
-		save = ft_save(save, buffer);
-		if (!(save))
+		n_read = read(fd, buff, BUFFER_SIZE);
+		if (n_read < 0)
+			return (free(buff), NULL);
+		buff[n_read] = '\0';
+		lu = add_mem(lu, buff);
+		if (!(lu))
 			return (NULL);
 	}
-	return (ft_line(nread, &save));
+	return (get_line(n_read, &lu));
 }
-  int main()
- {
- 	int fd = open("big_line_with_nl", O_RDONLY);
- 	if (fd == 2)
- 		return (2);
- 	char *s2;
- 	while ((s2 = get_next_line(fd)) != NULL)
- 	{
- 		printf("%s", s2);
- 		free(s2);
- 	}
- 	//get_next_line(fd);
- 	//printf("%s", s2);
- }
-
-//  int main(int argc, char **argv)
-// {
-//	(void) argc;
-// 	int fd = open(argv[1], O_RDONLY);
-// 	if (fd == 2)
-// 		return (2);
-// 	char *s2;
-// 	while ((s2 = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("%s", s2);
-// 		free(s2);
-// 	}
-// 	//get_next_line(fd);
-// 	//printf("%s", s2);
-// }
