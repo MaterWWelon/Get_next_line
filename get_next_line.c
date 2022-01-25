@@ -6,7 +6,7 @@
 /*   By: mbellini <mbellini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/21 10:49:00 by mbellini          #+#    #+#             */
-/*   Updated: 2021/12/29 15:23:14 by mbellini         ###   ########.fr       */
+/*   Updated: 2022/01/25 14:09:47 by mbellini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,29 +82,42 @@ char	*get_next_line(int fd)
 	while (nread > 0 && find_n(save) == -1)
 	{
 		nread = read(fd, buffer, BUFFER_SIZE);
-		printf("nread: %d\n", nread);
 		if (nread < 0)
 			return (NULL);
-		printf("ici\n");
 		buffer[nread] = '\0';
-		printf("ici2");
 		save = ft_save(save, buffer);
 		if (!(save))
 			return (NULL);
 	}
 	return (ft_line(nread, &save));
 }
-int main()
-{
-	int fd = open("test2", O_RDONLY);
-	if (fd == 1)
-		return (1);
-	char *s1;
-	while ((s1 = get_next_line(fd)) != NULL)
-	{
-		printf("%s", s1);
-		free(s1);
-	}
-	//get_next_line(fd);
-	//printf("%s", s1);
-}
+  int main()
+ {
+ 	int fd = open("big_line_with_nl", O_RDONLY);
+ 	if (fd == 2)
+ 		return (2);
+ 	char *s2;
+ 	while ((s2 = get_next_line(fd)) != NULL)
+ 	{
+ 		printf("%s", s2);
+ 		free(s2);
+ 	}
+ 	//get_next_line(fd);
+ 	//printf("%s", s2);
+ }
+
+//  int main(int argc, char **argv)
+// {
+//	(void) argc;
+// 	int fd = open(argv[1], O_RDONLY);
+// 	if (fd == 2)
+// 		return (2);
+// 	char *s2;
+// 	while ((s2 = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", s2);
+// 		free(s2);
+// 	}
+// 	//get_next_line(fd);
+// 	//printf("%s", s2);
+// }

@@ -6,7 +6,7 @@
 /*   By: mbellini <mbellini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/23 10:28:19 by mbellini          #+#    #+#             */
-/*   Updated: 2021/12/29 15:19:50 by mbellini         ###   ########.fr       */
+/*   Updated: 2022/01/25 12:39:20 by mbellini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*ft_strdup(const char *s)
 	cpy = malloc(sizeof(char) * (slen + 1));
 	if (!cpy)
 		return (NULL);
-	while (s[i])
+	while (s && s[i])
 	{
 		cpy[i] = s[i];
 		i++;
@@ -39,7 +39,7 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
-	while (s[i] != '\0')
+	while (s && s[i] != '\0')
 		i++;
 	return (i);
 }
